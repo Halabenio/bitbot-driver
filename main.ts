@@ -1,7 +1,8 @@
 enum RadioMessage {
     message1 = 49434,
     Occupied = 8782,
-    CarKeepalive = 29201
+    CarKeepalive = 29201,
+    ControllerKeepalive = 30085
 }
 radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
     bitbot.setLedColor(0xFF0000)
@@ -9,6 +10,13 @@ radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
         LastKeepalive = 50
         Connected = -1
         music.play(music.stringPlayable("F C5 - - - - - - ", 500), music.PlaybackMode.InBackground)
+    }
+})
+radio.onReceivedMessage(RadioMessage.ControllerKeepalive, function () {
+    bitbot.setLedColor(0xFFFF00)
+    if (LastKeepalive <= 25) {
+        LastKeepalive = 50
+        Connected = -1
     }
 })
 input.onButtonPressed(Button.A, function () {
@@ -25,7 +33,8 @@ input.onButtonPressed(Button.A, function () {
 input.onButtonPressed(Button.AB, function () {
     music.play(music.stringPlayable("E C F - - C5 - - ", 500), music.PlaybackMode.InBackground)
     Connected = 0
-    bitbot.ledRainbow(true, BBArms.Both)
+    bitbot.ledRainbow(true, BBArms.Left)
+    bitbot.ledRainbow(false, BBArms.Right)
 })
 input.onButtonPressed(Button.B, function () {
     Connected = -1
@@ -52,6 +61,13 @@ loops.everyInterval(10, function () {
         LastKeepalive += -1
         if (LastKeepalive <= 0) {
             bitbot.setLedColor(0xFF00FF)
+        }
+    } else if (Connected == 1) {
+        LastKeepalive += -1
+        if (LastKeepalive <= 0) {
+            Connected = 0
+            bitbot.ledRainbow(true, BBArms.Left)
+            bitbot.ledRainbow(false, BBArms.Right)
         }
     }
 })
