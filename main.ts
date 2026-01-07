@@ -1,7 +1,16 @@
 enum RadioMessage {
     message1 = 49434,
-    Occupied = 8782
+    Occupied = 8782,
+    CarKeepalive = 29201
 }
+radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
+    bitbot.setLedColor(0xFF0000)
+    if (LastKeepalive <= 25) {
+        LastKeepalive = 50
+        Connected = -1
+        music.play(music.stringPlayable("F C5 - - - - - - ", 500), music.PlaybackMode.InBackground)
+    }
+})
 input.onButtonPressed(Button.A, function () {
     Connected = -1
     if (Channel > 0) {
@@ -13,12 +22,8 @@ input.onButtonPressed(Button.A, function () {
     radio.setGroup(40 + Channel)
     bitbot.setLedColor(0xFF00FF)
 })
-radio.onReceivedMessage(RadioMessage.Occupied, function () {
-    bitbot.setLedColor(0xFF0000)
-    LastKeepalive = 100
-    Connected = -1
-})
 input.onButtonPressed(Button.AB, function () {
+    music.play(music.stringPlayable("E C F - - C5 - - ", 500), music.PlaybackMode.InBackground)
     Connected = 0
     bitbot.ledRainbow(true, BBArms.Both)
 })
@@ -41,6 +46,7 @@ Channel = 0
 basic.showNumber(Channel)
 radio.setGroup(40)
 bitbot.setLedColor(0xFF00FF)
+music.play(music.stringPlayable("C E G - - - - - ", 500), music.PlaybackMode.InBackground)
 loops.everyInterval(10, function () {
     if (Connected == -1) {
         LastKeepalive += -1
@@ -51,7 +57,7 @@ loops.everyInterval(10, function () {
 })
 basic.forever(function () {
     if (Connected == 0) {
-        radio.sendMessage(RadioMessage.Occupied)
+        radio.sendMessage(RadioMessage.CarKeepalive)
         bitbot.ledRotate(false, BBArms.Both)
     }
 })
