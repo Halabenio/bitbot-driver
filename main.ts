@@ -5,14 +5,15 @@ enum RadioMessage {
     ControllerKeepalive = 30085
 }
 radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
+    Connected = -1
     bitbot.setLedColor(0xFF0000)
     if (LastKeepalive <= 25) {
         LastKeepalive = 50
-        Connected = -1
         music.play(music.stringPlayable("F C5 - - - - - - ", 500), music.PlaybackMode.InBackground)
     }
 })
 radio.onReceivedMessage(RadioMessage.ControllerKeepalive, function () {
+    Connected = 1
     bitbot.setLedColor(0xFFFF00)
     if (LastKeepalive <= 25) {
         LastKeepalive = 50
@@ -28,11 +29,12 @@ input.onButtonPressed(Button.A, function () {
     basic.showNumber(Channel)
     radio.setGroup(40 + Channel)
     bitbot.setLedColor(0xFF00FF)
+    Connected = -1
 })
 input.onButtonPressed(Button.AB, function () {
     music.play(music.stringPlayable("E C F - - C5 - - ", 500), music.PlaybackMode.InBackground)
     Connected = 0
-    bitbot.ledRainbow(true, BBArms.Left)
+    bitbot.ledRainbow(false, BBArms.Left)
     bitbot.ledRainbow(false, BBArms.Right)
 })
 input.onButtonPressed(Button.B, function () {
@@ -45,6 +47,7 @@ input.onButtonPressed(Button.B, function () {
     basic.showNumber(Channel)
     radio.setGroup(40 + Channel)
     bitbot.setLedColor(0xFF00FF)
+    Connected = -1
 })
 let LastKeepalive = 0
 let Channel = 0
@@ -55,7 +58,7 @@ basic.showNumber(Channel)
 radio.setGroup(40)
 bitbot.setLedColor(0xFF00FF)
 music.play(music.stringPlayable("C E G - - - - - ", 500), music.PlaybackMode.InBackground)
-loops.everyInterval(10, function () {
+loops.everyInterval(50, function () {
     if (Connected == -1) {
         LastKeepalive += -1
         if (LastKeepalive <= 0) {
@@ -65,7 +68,7 @@ loops.everyInterval(10, function () {
         LastKeepalive += -1
         if (LastKeepalive <= 0) {
             Connected = 0
-            bitbot.ledRainbow(true, BBArms.Left)
+            bitbot.ledRainbow(false, BBArms.Left)
             bitbot.ledRainbow(false, BBArms.Right)
         }
     }
@@ -73,7 +76,10 @@ loops.everyInterval(10, function () {
 basic.forever(function () {
     if (Connected == 0) {
         radio.sendMessage(RadioMessage.CarKeepalive)
+        basic.showNumber(Channel)
     } else if (Connected == 1) {
         radio.sendMessage(RadioMessage.CarKeepalive)
     }
+    bitbot.ledRotate(true, BBArms.Left)
+    bitbot.ledRotate(false, BBArms.Right)
 })
