@@ -16,7 +16,6 @@ radio.onReceivedMessage(RadioMessage.ControllerKeepalive, function () {
     bitbot.setLedColor(0xFFFF00)
     if (LastKeepalive <= 25) {
         LastKeepalive = 50
-        Connected = -1
     }
 })
 input.onButtonPressed(Button.A, function () {
@@ -74,6 +73,7 @@ loops.everyInterval(10, function () {
 basic.forever(function () {
     if (Connected == 0) {
         radio.sendMessage(RadioMessage.CarKeepalive)
-        bitbot.ledRotate(false, BBArms.Both)
+    } else if (Connected == 1) {
+        radio.sendMessage(RadioMessage.CarKeepalive)
     }
 })
