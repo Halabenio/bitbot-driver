@@ -7,7 +7,7 @@ enum RadioMessage {
 radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
     Connected = -1
     bitbot.setLedColor(0xFF0000)
-    if (LastKeepalive <= 25) {
+    if (LastKeepalive <= 50) {
         LastKeepalive = 50
         music.play(music.stringPlayable("F C5 - - - - - - ", 500), music.PlaybackMode.InBackground)
     }
@@ -15,7 +15,7 @@ radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
 radio.onReceivedMessage(RadioMessage.ControllerKeepalive, function () {
     Connected = 1
     bitbot.setLedColor(0xFFFF00)
-    if (LastKeepalive <= 25) {
+    if (LastKeepalive <= 50) {
         LastKeepalive = 50
     }
 })
@@ -36,6 +36,20 @@ input.onButtonPressed(Button.AB, function () {
     Connected = 0
     bitbot.ledRainbow(false, BBArms.Left)
     bitbot.ledRainbow(false, BBArms.Right)
+})
+radio.onReceivedString(function (receivedString) {
+    if (receivedString == "Left") {
+        bitbot.move(BBMotor.Left, BBDirection.Forward, 60)
+    }
+    if (receivedString == "Right") {
+        bitbot.move(BBMotor.Right, BBDirection.Forward, 60)
+    }
+    if (receivedString == "StopLeft") {
+        bitbot.move(BBMotor.Left, BBDirection.Forward, 0)
+    }
+    if (receivedString == "StopRight") {
+        bitbot.move(BBMotor.Right, BBDirection.Forward, 0)
+    }
 })
 input.onButtonPressed(Button.B, function () {
     Connected = -1
@@ -77,6 +91,8 @@ basic.forever(function () {
     if (Connected == 0) {
         radio.sendMessage(RadioMessage.CarKeepalive)
         basic.showNumber(Channel)
+        bitbot.move(BBMotor.Left, BBDirection.Forward, 0)
+        bitbot.move(BBMotor.Right, BBDirection.Forward, 0)
     } else if (Connected == 1) {
         radio.sendMessage(RadioMessage.CarKeepalive)
     }
