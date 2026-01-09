@@ -14,7 +14,7 @@ radio.onReceivedMessage(RadioMessage.CarKeepalive, function () {
 })
 radio.onReceivedMessage(RadioMessage.ControllerKeepalive, function () {
     Connected = 1
-    bitbot.setLedColor(0xFFFF00)
+    bitbot.setLedColor(0x8000FF)
     if (LastKeepalive <= 50) {
         LastKeepalive = 50
     }
@@ -28,7 +28,7 @@ input.onButtonPressed(Button.A, function () {
     }
     basic.showNumber(Channel)
     radio.setGroup(40 + Channel)
-    bitbot.setLedColor(0xFF00FF)
+    bitbot.setLedColor(0xFFC000)
     Connected = -1
 })
 input.onButtonPressed(Button.AB, function () {
@@ -60,7 +60,7 @@ input.onButtonPressed(Button.B, function () {
     }
     basic.showNumber(Channel)
     radio.setGroup(40 + Channel)
-    bitbot.setLedColor(0xFF00FF)
+    bitbot.setLedColor(0xFFC000)
     Connected = -1
 })
 let LastKeepalive = 0
@@ -70,13 +70,13 @@ Connected = -1
 Channel = 0
 basic.showNumber(Channel)
 radio.setGroup(40)
-bitbot.setLedColor(0xFF00FF)
+bitbot.setLedColor(0xFFC000)
 music.play(music.stringPlayable("C E G - - - - - ", 500), music.PlaybackMode.InBackground)
 loops.everyInterval(50, function () {
     if (Connected == -1) {
         LastKeepalive += -1
         if (LastKeepalive <= 0) {
-            bitbot.setLedColor(0xFF00FF)
+            bitbot.setLedColor(0xFFC000)
         }
     } else if (Connected == 1) {
         LastKeepalive += -1
