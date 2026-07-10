@@ -6,7 +6,8 @@
         "radio": "*",
         "microphone": "*",
         "radio-broadcast": "*",
-        "BitBot": "github:4tronix/bitbot#v2.1.13"
+        "BitBot": "github:4tronix/bitbot#v2.1.13",
+        "microbit-pxt-flashstorage": "github:bsiever/microbit-pxt-flashstorage#v0.1.4"
     },
     "files": [
         "main.blocks",
@@ -17,7 +18,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "8.0.18",
+        "target": "8.0.22",
         "targetId": "microbit"
     },
     "supportedTargets": [
