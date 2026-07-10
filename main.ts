@@ -24,9 +24,10 @@ input.onButtonPressed(Button.AB, function () {
         flashstorage.put("Gateway", convertToText(SettingNumber))
         radio.setGroup(Gateway * 10)
         serial.writeNumber(Gateway * 10)
+        uid = randint(0, 9999999)
         Status = 2
         bitbot.setLedColor(0x0000FF)
-        radio.sendValue("CarAwait", 0)
+        radio.sendValue("CarAwait", uid)
     } else if (Status == 2) {
         Status = 1
         SettingNumber = parseFloat(flashstorage.getOrDefault("Gateway", "0"))
@@ -47,16 +48,14 @@ input.onButtonPressed(Button.B, function () {
 })
 radio.onReceivedValue(function (name, value) {
     serial.writeValue(name, value)
-    basic.showIcon(IconNames.Heart)
-    if (name == "CarDispatch") {
-        basic.showIcon(IconNames.Happy)
+    if (name == "CarDisp") {
+        basic.showNumber(value)
         Status = 3
         bitbot.setLedColor(0x18E600)
         radio.setGroup(Gateway * 10 + value)
         serial.writeNumber(Gateway * 10 + value)
         Address = Gateway * 10 + value
-    } else if (name == "GatewayFull") {
-        basic.showIcon(IconNames.Sad)
+    } else if (name == "GateFull") {
         Status = 4
         for (let index = 0; index < 8; index++) {
             bitbot.setPixelColor(0, 0xff0000)
@@ -65,19 +64,21 @@ radio.onReceivedValue(function (name, value) {
         }
     } else if (name == "IsCar") {
         radio.sendValue("CarHere", 0)
-    } else if (name == "DrivePacket") {
-        bitbot.move(BBMotor.Left, BBDirection.Forward, parseFloat(convertToText(value).substr(0, 3)))
-        bitbot.move(BBMotor.Right, BBDirection.Forward, parseFloat(convertToText(value).substr(3, 3)))
+    } else if (name == "DrPacket") {
+        bitbot.move(BBMotor.Left, BBDirection.Forward, parseFloat(convertToText(value).substr(1, 3)))
+        bitbot.move(BBMotor.Right, BBDirection.Forward, parseFloat(convertToText(value).substr(4, 3)))
         radio.sendValue("Driving", 0)
     } else if (name == "CarHere") {
         radio.setGroup(Gateway * 10)
-        radio.sendValue("DoubleCar", Address)
+        radio.sendValue("DblCar", Address)
     }
 })
 let Address = 0
 let SettingNumber = 0
 let Gateway = 0
+let uid = 0
 let Status = 0
+serial.writeLine("Start")
 Status = 0
 // Unset
 basic.showLeds(`
@@ -89,15 +90,16 @@ basic.showLeds(`
     `)
 bitbot.setLedColor(0xff0000)
 if (flashstorage.getOrDefault("Gateway", "NotSet") != "NotSet") {
+    uid = randint(0, 9999999)
     Status = 2
     Gateway = parseFloat(flashstorage.getOrDefault("Gateway", "0"))
     bitbot.setLedColor(0x0000FF)
     radio.setGroup(Gateway * 10)
     serial.writeNumber(Gateway * 10)
-    radio.sendValue("CarAwait", 0)
+    radio.sendValue("CarAwait", uid)
 }
-loops.everyInterval(500, function () {
+loops.everyInterval(5000, function () {
     if (Status == 2 || Status == 4) {
-        radio.sendValue("CarAwait", 0)
+        radio.sendValue("CarAwait", uid)
     }
 })
